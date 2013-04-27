@@ -1,0 +1,258 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Advanced topics &mdash; Django Simple Captcha 0.3.5 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.3.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Django Simple Captcha 0.3.5 documentation" href="index.html" />
+    <link rel="prev" title="Using django-simple-captcha" href="usage.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="usage.html" title="Using django-simple-captcha"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Django Simple Captcha 0.3.5 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="advanced-topics">
+<h1>Advanced topics<a class="headerlink" href="#advanced-topics" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="configuration-toggles">
+<h2>Configuration toggles<a class="headerlink" href="#configuration-toggles" title="Permalink to this headline">¶</a></h2>
+<p>The following configuration elements can be defined (in your <tt class="docutils literal"><span class="pre">settings.py</span></tt>)</p>
+<div class="section" id="captcha-font-path">
+<h3>CAPTCHA_FONT_PATH<a class="headerlink" href="#captcha-font-path" title="Permalink to this headline">¶</a></h3>
+<p>Full path and filename of a TrueType (TTF), OpenType, or pilfont font file used to render text.</p>
+<p>Defaults to: <tt class="docutils literal"><span class="pre">fonts/Vera.ttf</span></tt> (included in the application, GPL font).</p>
+<p>Note that your PIL installation must support TTF and/or OpenFont if you want to use these kind of glyphs (most modern distributions of PIL do.)</p>
+</div>
+<div class="section" id="captcha-font-size">
+<h3>CAPTCHA_FONT_SIZE<a class="headerlink" href="#captcha-font-size" title="Permalink to this headline">¶</a></h3>
+<p>Font-size in pixels of the rendered text.</p>
+<p>Defaults to &#8216;22&#8217;.</p>
+</div>
+<div class="section" id="captcha-letter-rotation">
+<h3>CAPTCHA_LETTER_ROTATION<a class="headerlink" href="#captcha-letter-rotation" title="Permalink to this headline">¶</a></h3>
+<p>A random rotation in this interval is applied to each letter in the challenge text.</p>
+<p>Defaults to <tt class="docutils literal"><span class="pre">(-35,35)</span></tt>.</p>
+<p>New in version 0.1.6: set this to None to disable letter roation.</p>
+</div>
+<div class="section" id="captcha-background-color">
+<h3>CAPTCHA_BACKGROUND_COLOR<a class="headerlink" href="#captcha-background-color" title="Permalink to this headline">¶</a></h3>
+<p>Background-color of the captcha. Can be expressed as html-style #rrggbb, rgb(red, green, blue), or common html names (e.g. &#8220;red&#8221;).</p>
+<p>Defaults to: <tt class="docutils literal"><span class="pre">'#ffffff'</span></tt></p>
+</div>
+<div class="section" id="captcha-foreground-color">
+<h3>CAPTCHA_FOREGROUND_COLOR<a class="headerlink" href="#captcha-foreground-color" title="Permalink to this headline">¶</a></h3>
+<p>Foreground-color of the captcha.</p>
+<p>Defaults to <tt class="docutils literal"><span class="pre">'#001100'</span></tt></p>
+</div>
+<div class="section" id="captcha-challenge-funct">
+<h3>CAPTCHA_CHALLENGE_FUNCT<a class="headerlink" href="#captcha-challenge-funct" title="Permalink to this headline">¶</a></h3>
+<p>String representing a python callable (i.e. a function) to use as challenge generator.</p>
+<p>See Generators below for a list of available generators and a guide on how to write your own.</p>
+<p>Defaults to: <tt class="docutils literal"><span class="pre">'captcha.helpers.random_char_challenge'</span></tt></p>
+</div>
+<div class="section" id="captcha-noise-functions">
+<h3>CAPTCHA_NOISE_FUNCTIONS<a class="headerlink" href="#captcha-noise-functions" title="Permalink to this headline">¶</a></h3>
+<p>List of strings of python callables that take a PIL <tt class="docutils literal"><span class="pre">DrawImage</span></tt> object and an <tt class="docutils literal"><span class="pre">Image</span></tt> image as input, modify the <tt class="docutils literal"><span class="pre">DrawImage</span></tt>, then return it.</p>
+<p>Defaults to: <tt class="docutils literal"><span class="pre">('captcha.helpers.noise_arcs','captcha.helpers.noise_dots',)</span></tt></p>
+</div>
+<div class="section" id="captcha-filter-functions">
+<h3>CAPTCHA_FILTER_FUNCTIONS<a class="headerlink" href="#captcha-filter-functions" title="Permalink to this headline">¶</a></h3>
+<p>List of strings of python callables that take a PIL <tt class="docutils literal"><span class="pre">Image</span></tt> object as input, modify it and return it.</p>
+<p>These are called right before the rendering, i.e. after the noise functions.</p>
+<p>Defaults to: <tt class="docutils literal"><span class="pre">('captcha.helpers.post_smooth',)</span></tt></p>
+</div>
+<div class="section" id="captcha-words-dictionary">
+<h3>CAPTCHA_WORDS_DICTIONARY<a class="headerlink" href="#captcha-words-dictionary" title="Permalink to this headline">¶</a></h3>
+<p>Required for the <tt class="docutils literal"><span class="pre">word_challenge</span></tt> challenge function only. Points a file containing a list of words, one per line.</p>
+<p>Defaults to: <tt class="docutils literal"><span class="pre">'/usr/share/dict/words'</span></tt></p>
+</div>
+<div class="section" id="captcha-flite-path">
+<h3>CAPTCHA_FLITE_PATH<a class="headerlink" href="#captcha-flite-path" title="Permalink to this headline">¶</a></h3>
+<p>Full path to the <tt class="docutils literal"><span class="pre">flite</span></tt> executable. When defined, will automatically add audio output to the captcha.</p>
+<p>Defaults to: <tt class="docutils literal"><span class="pre">None</span></tt> (no audio output)</p>
+<p>CAPTCHA_TIMEOUT
+Integer. Lifespan, in minutes, of the generated captcha.</p>
+<p>Defaults to: 5</p>
+</div>
+<div class="section" id="captcha-length">
+<h3>CAPTCHA_LENGTH<a class="headerlink" href="#captcha-length" title="Permalink to this headline">¶</a></h3>
+<p>Sets the length, in chars, of the generated captcha. (for the <tt class="docutils literal"><span class="pre">'captcha.helpers.random_char_challenge'</span></tt> challenge)</p>
+<p>Defaults to: 4</p>
+</div>
+<div class="section" id="captcha-dictionary-min-length">
+<h3>CAPTCHA_DICTIONARY_MIN_LENGTH<a class="headerlink" href="#captcha-dictionary-min-length" title="Permalink to this headline">¶</a></h3>
+<p>When using the word_challenge challenge function, controls the minimum length of the words to be randomly picked from the dictionary file.</p>
+<p>Defaults to: 0</p>
+</div>
+<div class="section" id="captcha-dictionary-max-length">
+<h3>CAPTCHA_DICTIONARY_MAX_LENGTH<a class="headerlink" href="#captcha-dictionary-max-length" title="Permalink to this headline">¶</a></h3>
+<p>When using the word_challenge challenge function, controls the maximal length of the words to be randomly picked from the dictionary file.</p>
+<p>Defaults to: 99</p>
+<p>Note: it&#8217;s perfectly safe to specify e.g. <tt class="docutils literal"><span class="pre">CAPTCHA_DICTIONARY_MIN_LENGTH</span> <span class="pre">=</span> <span class="pre">CAPTCHA_DICTIONARY_MAX_LENGTH</span> <span class="pre">=</span> <span class="pre">6</span></tt> but it&#8217;s considered an error to define <tt class="docutils literal"><span class="pre">CAPTCHA_DICTIONARY_MAX_LENGTH</span></tt> to be smaller than <tt class="docutils literal"><span class="pre">CAPTCHA_DICTIONARY_MIN_LENGTH</span></tt>.</p>
+</div>
+<div class="section" id="captcha-output-format">
+<h3>CAPTCHA_OUTPUT_FORMAT<a class="headerlink" href="#captcha-output-format" title="Permalink to this headline">¶</a></h3>
+<p>New in version 0.1.6</p>
+<p>Specify your own output format for the generated markup, when e.g. you want to position the captcha image relative to the text field in your form.</p>
+<p>Defaults to: <tt class="docutils literal"><span class="pre">u'%(image)s</span> <span class="pre">%(hidden_field)s</span> <span class="pre">%(text_field)s'</span></tt></p>
+<p>Note: the three keys have to be present in the format string or an error will be thrown at runtime.</p>
+</div>
+</div>
+<div class="section" id="generators-and-modifiers">
+<h2>Generators and modifiers<a class="headerlink" href="#generators-and-modifiers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="random-chars">
+<h3>Random chars<a class="headerlink" href="#random-chars" title="Permalink to this headline">¶</a></h3>
+<img alt="http://django-simple-captcha.googlecode.com/files/Random%20chars.png" src="http://django-simple-captcha.googlecode.com/files/Random%20chars.png" />
+<p>Classic captcha that picks four random chars. This is case insensitive.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">CAPTCHA_CHALLENGE_FUNCT</span> <span class="o">=</span> <span class="s">&#39;captcha.helpers.random_char_challenge&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="simple-math">
+<h3>Simple Math<a class="headerlink" href="#simple-math" title="Permalink to this headline">¶</a></h3>
+<img alt="http://django-simple-captcha.googlecode.com/files/Math.png" src="http://django-simple-captcha.googlecode.com/files/Math.png" />
+<p>Another classic, that challenges the user to resolve a simple math challenge by randomly picking two numbers between one and nine, and a random operator among plus, minus, times.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">CAPTCHA_CHALLENGE_FUNCT</span> <span class="o">=</span> <span class="s">&#39;captcha.helpers.math_challenge&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dictionary-word">
+<h3>Dictionary Word<a class="headerlink" href="#dictionary-word" title="Permalink to this headline">¶</a></h3>
+<img alt="http://django-simple-captcha.googlecode.com/files/Dictionary.png" src="http://django-simple-captcha.googlecode.com/files/Dictionary.png" />
+<p>Picks a random word from a dictionary file. Note, you must define <tt class="docutils literal"><span class="pre">CAPTCHA_WORDS_DICTIONARY</span></tt> in your cofiguration to use this generator.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">CAPTCHA_CHALLENGE_FUNCT</span> <span class="o">=</span> <span class="s">&#39;captcha.helpers.word_challenge&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="roll-your-own">
+<h3>Roll your own<a class="headerlink" href="#roll-your-own" title="Permalink to this headline">¶</a></h3>
+<p>To have your own challenge generator, simply point <tt class="docutils literal"><span class="pre">CAPTCHA_CHALLENGE_FUNCT</span></tt> to a function that returns a tuple of strings: the first one (the challenge) will be rendered in the captcha, the second is the valid response to the challenge, e.g. <tt class="docutils literal"><span class="pre">('5+10=',</span> <span class="pre">'15')</span></tt>, <tt class="docutils literal"><span class="pre">('AAAA',</span> <span class="pre">'aaaa')</span></tt></p>
+<p>This sample generator that returns six random digits:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">random</span>
+
+<span class="k">def</span> <span class="nf">random_digit_challenge</span><span class="p">():</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="s">u&#39;&#39;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
+        <span class="n">ret</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">9</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">ret</span><span class="p">,</span> <span class="n">ret</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Advanced topics</a><ul>
+<li><a class="reference internal" href="#configuration-toggles">Configuration toggles</a><ul>
+<li><a class="reference internal" href="#captcha-font-path">CAPTCHA_FONT_PATH</a></li>
+<li><a class="reference internal" href="#captcha-font-size">CAPTCHA_FONT_SIZE</a></li>
+<li><a class="reference internal" href="#captcha-letter-rotation">CAPTCHA_LETTER_ROTATION</a></li>
+<li><a class="reference internal" href="#captcha-background-color">CAPTCHA_BACKGROUND_COLOR</a></li>
+<li><a class="reference internal" href="#captcha-foreground-color">CAPTCHA_FOREGROUND_COLOR</a></li>
+<li><a class="reference internal" href="#captcha-challenge-funct">CAPTCHA_CHALLENGE_FUNCT</a></li>
+<li><a class="reference internal" href="#captcha-noise-functions">CAPTCHA_NOISE_FUNCTIONS</a></li>
+<li><a class="reference internal" href="#captcha-filter-functions">CAPTCHA_FILTER_FUNCTIONS</a></li>
+<li><a class="reference internal" href="#captcha-words-dictionary">CAPTCHA_WORDS_DICTIONARY</a></li>
+<li><a class="reference internal" href="#captcha-flite-path">CAPTCHA_FLITE_PATH</a></li>
+<li><a class="reference internal" href="#captcha-length">CAPTCHA_LENGTH</a></li>
+<li><a class="reference internal" href="#captcha-dictionary-min-length">CAPTCHA_DICTIONARY_MIN_LENGTH</a></li>
+<li><a class="reference internal" href="#captcha-dictionary-max-length">CAPTCHA_DICTIONARY_MAX_LENGTH</a></li>
+<li><a class="reference internal" href="#captcha-output-format">CAPTCHA_OUTPUT_FORMAT</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#generators-and-modifiers">Generators and modifiers</a><ul>
+<li><a class="reference internal" href="#random-chars">Random chars</a></li>
+<li><a class="reference internal" href="#simple-math">Simple Math</a></li>
+<li><a class="reference internal" href="#dictionary-word">Dictionary Word</a></li>
+<li><a class="reference internal" href="#roll-your-own">Roll your own</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="usage.html"
+                        title="previous chapter">Using django-simple-captcha</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/advanced.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="usage.html" title="Using django-simple-captcha"
+             >previous</a> |</li>
+        <li><a href="index.html">Django Simple Captcha 0.3.5 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, 2012 Marco Bonetti.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
